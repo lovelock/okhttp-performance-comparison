@@ -29,6 +29,9 @@ public class AsyncService {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    try (ResponseBody responseBody = response.body()) {
+
+                    }
                     countDownLatch.countDown();
                 }
             });
