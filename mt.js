@@ -55,4 +55,5 @@ export const options = {
 //
 export default function() {
   http.get('http://127.0.0.1:8080/mt/call');
+  // http.get('http://192.168.2.149:8080/mt/call');
 }

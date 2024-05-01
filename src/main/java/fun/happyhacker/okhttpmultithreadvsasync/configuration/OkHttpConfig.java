@@ -13,7 +13,7 @@ public class OkHttpConfig {
 
     @Bean
     public OkHttpClient okHttpClient() {
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        ExecutorService executorService = Executors.newFixedThreadPool(6);
         Dispatcher dispatcher = new Dispatcher(executorService);
         return new OkHttpClient.Builder().dispatcher(dispatcher).build();
     }

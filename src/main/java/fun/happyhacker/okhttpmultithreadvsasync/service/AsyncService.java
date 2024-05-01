@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Component
@@ -17,10 +18,11 @@ public class AsyncService {
     @Autowired
     private OkHttpClient okHttpClient;
 
-    public void call() {
+    public int call() {
+        AtomicInteger count = new AtomicInteger(0);
         CountDownLatch countDownLatch = new CountDownLatch(100);
         for (int i = 0; i < 100; i++) {
-            Request request = new Request.Builder().url(URL + "?a=" + i).build();
+            Request request = new Request.Builder().url(URL).build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -30,16 +32,20 @@ public class AsyncService {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     try (ResponseBody responseBody = response.body()) {
-
+                        assert response.body() != null;
+                        count.getAndIncrement();
                     }
                     countDownLatch.countDown();
                 }
             });
         }
+
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        return count.get();
     }
 }
